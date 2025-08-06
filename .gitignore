@@ -1,0 +1,77 @@
+# Django #
+*.log
+*.pot
+*.pyc
+__pycache__/
+db.sqlite3
+media/
+staticfiles/
+
+# 环境变量和敏感信息 #
+.env
+.env.*
+!.env.example
+.venv/
+venv/
+
+# IDEs #
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS #
+.DS_Store
+Thumbs.db
+
+# Python #
+*.py[cod]
+*$py.class
+.Python
+pip-log.txt
+pip-delete-this-directory.txt
+.tox/
+.coverage
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.egg
+*.egg-info/
+.installed.cfg
+*.egg
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.manifest
+*.spec
+.pytest_cache/
+pytest_cache/
+.ropeproject/
+/site
+.mypy_cache/
+.pyre/
+
+# Django specific #
+**/migrations/**
+!/manage.py
+
+# Media and static files #
+/media/
+/static/
+
+# Backup files #
+*.bak
+*.orig
+
+# Local configuration files #
+local_settings.py
