@@ -12,9 +12,10 @@ class ProjectSpaceView(APIView):
 
     @swagger_auto_schema(
         operation_summary="获取项目空间列表",
-        operation_description="获取所有项目空间，支持按状态筛选和分页",
+        operation_description="获取所有项目空间，支持按状态和名称筛选，以及分页",
         manual_parameters=[
             openapi.Parameter('is_active', openapi.IN_QUERY, description="是否启用", type=openapi.TYPE_BOOLEAN),
+            openapi.Parameter('name', openapi.IN_QUERY, description="项目名称（模糊匹配）", type=openapi.TYPE_STRING),
             openapi.Parameter('page', openapi.IN_QUERY, description="页码", type=openapi.TYPE_INTEGER),
             openapi.Parameter('page_size', openapi.IN_QUERY, description="每页数量", type=openapi.TYPE_INTEGER),
         ],
@@ -23,6 +24,7 @@ class ProjectSpaceView(APIView):
     def get(self, request):
         """获取项目空间列表"""
         is_active = request.query_params.get('is_active')
+        name = request.query_params.get('name')
         page = int(request.query_params.get('page', 1))
         page_size = int(request.query_params.get('page_size', 10))
 
@@ -30,7 +32,7 @@ class ProjectSpaceView(APIView):
         if is_active is not None:
             is_active = is_active.lower() == 'true'
 
-        queryset = ProjectSpaceService.get_all_projects(is_active=is_active)
+        queryset = ProjectSpaceService.get_all_projects(is_active=is_active, name=name)
 
         return ApiResponse.paginated_response(
             queryset=queryset,
@@ -119,9 +121,11 @@ class VehicleModelView(APIView):
 
     @swagger_auto_schema(
         operation_summary="获取车型列表",
-        operation_description="获取车型列表，可按项目空间筛选",
+        operation_description="获取车型列表，可按项目空间、名称和编码筛选",
         manual_parameters=[
             openapi.Parameter('project_id', openapi.IN_QUERY, description="项目空间ID", type=openapi.TYPE_STRING),
+            openapi.Parameter('name', openapi.IN_QUERY, description="车型名称（模糊匹配）", type=openapi.TYPE_STRING),
+            openapi.Parameter('code', openapi.IN_QUERY, description="车型编码（模糊匹配）", type=openapi.TYPE_STRING),
             openapi.Parameter('page', openapi.IN_QUERY, description="页码", type=openapi.TYPE_INTEGER),
             openapi.Parameter('page_size', openapi.IN_QUERY, description="每页数量", type=openapi.TYPE_INTEGER),
         ],
@@ -130,13 +134,15 @@ class VehicleModelView(APIView):
     def get(self, request):
         """获取车型列表"""
         project_id = request.query_params.get('project_id')
+        name = request.query_params.get('name')
+        code = request.query_params.get('code')
         page = int(request.query_params.get('page', 1))
         page_size = int(request.query_params.get('page_size', 10))
 
         if project_id:
-            queryset = VehicleModelService.get_vehicles_by_project(project_id)
+            queryset = VehicleModelService.get_vehicles_by_project(project_id, code=code, name=name)
         else:
-            queryset = VehicleModelService.get_all_vehicles()
+            queryset = VehicleModelService.get_all_vehicles(name=name, code=code)
 
         return ApiResponse.paginated_response(
             queryset=queryset,

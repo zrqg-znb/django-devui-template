@@ -1,9 +1,10 @@
-from django.db import transaction
 from django.core.exceptions import ObjectDoesNotExist
+from django.db import transaction
+
 from .models import ProjectSpace, VehicleModel
 from .serializers import (
-    ProjectSpaceSerializer, ProjectSpaceCreateSerializer,
-    VehicleModelSerializer, VehicleModelCreateSerializer
+    ProjectSpaceCreateSerializer,
+    VehicleModelCreateSerializer
 )
 
 
@@ -11,11 +12,13 @@ class ProjectSpaceService:
     """项目空间业务逻辑"""
 
     @staticmethod
-    def get_all_projects(is_active=None):
-        """获取所有项目空间"""
+    def get_all_projects(is_active=None, name=None):
+        """获取所有项目空间，支持按状态和名称筛选"""
         queryset = ProjectSpace.objects.filter(is_deleted=False)
         if is_active is not None:
             queryset = queryset.filter(is_active=is_active)
+        if name:
+            queryset = queryset.filter(name__icontains=name)
         return queryset.order_by('-created_at')
 
     @staticmethod
@@ -71,17 +74,27 @@ class VehicleModelService:
     """车型业务逻辑"""
 
     @staticmethod
-    def get_vehicles_by_project(project_id):
-        """根据项目ID获取车型列表"""
-        return VehicleModel.objects.filter(
+    def get_vehicles_by_project(project_id, code=None, name=None):
+        """根据项目ID获取车型列表，支持按名称和编码筛选"""
+        queryset = VehicleModel.objects.filter(
             project_space_id=project_id,
             is_deleted=False
-        ).order_by('-created_at')
+        )
+        if name:
+            queryset = queryset.filter(name__icontains=name)
+        if code:
+            queryset = queryset.filter(code__icontains=code)
+        return queryset.order_by('-created_at')
 
     @staticmethod
-    def get_all_vehicles():
-        """获取所有车型"""
-        return VehicleModel.objects.filter(is_deleted=False).order_by('-created_at')
+    def get_all_vehicles(name=None, code=None):
+        """获取所有车型，支持按名称和编码筛选"""
+        queryset = VehicleModel.objects.filter(is_deleted=False)
+        if name:
+            queryset = queryset.filter(name__icontains=name)
+        if code:
+            queryset = queryset.filter(code__icontains=code)
+        return queryset.order_by('-created_at')
 
     @staticmethod
     def get_vehicle_by_id(vehicle_id):

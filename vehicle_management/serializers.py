@@ -24,8 +24,14 @@ class ProjectSpaceCreateSerializer(serializers.ModelSerializer):
         fields = ['name', 'is_active', 'description']
 
     def validate_name(self, value):
-        if ProjectSpace.objects.filter(name=value, is_deleted=False).exists():
-            raise serializers.ValidationError("项目名称已存在")
+        # 创建时验证
+        if self.instance is None:
+            if ProjectSpace.objects.filter(name=value, is_deleted=False).exists():
+                raise serializers.ValidationError("项目名称已存在")
+        # 更新时验证
+        else:
+            if ProjectSpace.objects.filter(name=value, is_deleted=False).exclude(id=self.instance.id).exists():
+                raise serializers.ValidationError("项目名称已存在")
         return value
 
 
