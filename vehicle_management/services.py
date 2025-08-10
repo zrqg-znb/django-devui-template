@@ -128,6 +128,14 @@ class VehicleModelService:
         vehicle = VehicleModelService.get_vehicle_by_id(vehicle_id)
         if not vehicle:
             return None, "车型不存在"
+            
+        # 如果传入了project_space参数，验证项目空间是否存在且启用
+        if 'project_space' in data:
+            project_space = ProjectSpaceService.get_project_by_id(data.get('project_space'))
+            if not project_space:
+                return None, "项目空间不存在"
+            if not project_space.is_active:
+                return None, "项目空间未启用，无法修改车型所属项目"
 
         serializer = VehicleModelCreateSerializer(vehicle, data=data, partial=True)
         if serializer.is_valid():

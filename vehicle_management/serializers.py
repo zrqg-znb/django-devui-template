@@ -58,8 +58,15 @@ class VehicleModelSerializer(serializers.ModelSerializer):
 
 
 class VehicleModelCreateSerializer(serializers.ModelSerializer):
-    """车型创建序列化器"""
+    """车型创建和更新序列化器"""
 
     class Meta:
         model = VehicleModel
         fields = ['project_space', 'name', 'code', 'module', 'description']
+        
+    def validate_project_space(self, value):
+        """验证项目空间"""
+        # 项目空间验证已在服务层处理，这里只做基本验证
+        if not ProjectSpace.objects.filter(id=value.id, is_deleted=False).exists():
+            raise serializers.ValidationError("项目空间不存在")
+        return value

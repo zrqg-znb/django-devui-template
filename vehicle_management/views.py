@@ -200,6 +200,7 @@ class VehicleModelDetailView(APIView):
         request_body=openapi.Schema(
             type=openapi.TYPE_OBJECT,
             properties={
+                'project_space': openapi.Schema(type=openapi.TYPE_STRING, description='所属项目空间ID'),
                 'name': openapi.Schema(type=openapi.TYPE_STRING, description='车型名称'),
                 'code': openapi.Schema(type=openapi.TYPE_STRING, description='车型编码'),
                 'module': openapi.Schema(type=openapi.TYPE_STRING, description='车型模块'),
