@@ -161,10 +161,18 @@ class VehicleModelView(APIView):
                 'project_space': openapi.Schema(type=openapi.TYPE_STRING, description='项目空间ID'),
                 'name': openapi.Schema(type=openapi.TYPE_STRING, description='车型名称'),
                 'code': openapi.Schema(type=openapi.TYPE_STRING, description='车型编码'),
-                'module': openapi.Schema(type=openapi.TYPE_STRING, description='车型模块'),
+                'module': openapi.Schema(type=openapi.TYPE_STRING, description='备用字段（原车型模块字段，现已由pipelines替代）'),
                 'description': openapi.Schema(type=openapi.TYPE_STRING, description='车型描述'),
+                'pipelines': openapi.Schema(
+                    type=openapi.TYPE_ARRAY,
+                    description='管道配置信息',
+                    items=openapi.Schema(
+                        type=openapi.TYPE_OBJECT,
+                        description='管道配置项，每项包含一个键值对，键为管道名称，值为管道数据'
+                    )
+                ),
             },
-            required=['project_space', 'name', 'code', 'module']
+            required=['project_space', 'name', 'code']
         ),
         responses={200: VehicleModelSerializer()}
     )
@@ -203,8 +211,16 @@ class VehicleModelDetailView(APIView):
                 'project_space': openapi.Schema(type=openapi.TYPE_STRING, description='所属项目空间ID'),
                 'name': openapi.Schema(type=openapi.TYPE_STRING, description='车型名称'),
                 'code': openapi.Schema(type=openapi.TYPE_STRING, description='车型编码'),
-                'module': openapi.Schema(type=openapi.TYPE_STRING, description='车型模块'),
+                'module': openapi.Schema(type=openapi.TYPE_STRING, description='备用字段（原车型模块字段，现已由pipelines替代）'),
                 'description': openapi.Schema(type=openapi.TYPE_STRING, description='车型描述'),
+                'pipelines': openapi.Schema(
+                    type=openapi.TYPE_ARRAY,
+                    description='管道配置信息',
+                    items=openapi.Schema(
+                        type=openapi.TYPE_OBJECT,
+                        description='管道配置项，每项包含一个键值对，键为管道名称，值为管道数据'
+                    )
+                ),
             }
         ),
         responses={200: VehicleModelSerializer()}

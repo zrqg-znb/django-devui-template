@@ -42,7 +42,7 @@ class VehicleModelSerializer(serializers.ModelSerializer):
     class Meta:
         model = VehicleModel
         fields = ['id', 'project_space', 'project_space_name', 'name', 'code', 'module',
-                  'description', 'created_at', 'updated_at']
+                  'description', 'pipelines', 'created_at', 'updated_at']
         read_only_fields = ['id', 'created_at', 'updated_at']
 
     def validate_code(self, value):
@@ -62,11 +62,27 @@ class VehicleModelCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = VehicleModel
-        fields = ['project_space', 'name', 'code', 'module', 'description']
+        fields = ['project_space', 'name', 'code', 'module', 'description', 'pipelines']
         
     def validate_project_space(self, value):
         """验证项目空间"""
         # 项目空间验证已在服务层处理，这里只做基本验证
         if not ProjectSpace.objects.filter(id=value.id, is_deleted=False).exists():
             raise serializers.ValidationError("项目空间不存在")
+        return value
+        
+    def validate_pipelines(self, value):
+        """验证管道配置格式"""
+        if value is None:
+            return []
+            
+        if not isinstance(value, list):
+            raise serializers.ValidationError("管道配置必须是列表格式")
+            
+        for item in value:
+            if not isinstance(item, dict):
+                raise serializers.ValidationError("管道配置项必须是字典格式")
+            if len(item) != 1:
+                raise serializers.ValidationError("每个管道配置项必须只包含一个键值对")
+                
         return value

@@ -48,12 +48,20 @@ class VehicleModel(BaseModel):
     )
     module = models.CharField(
         max_length=100,
-        verbose_name="车型模块"
+        blank=True,
+        verbose_name="备用字段",
+        help_text="原车型模块字段，现已由pipelines替代，保留作为备用"
     )
     description = models.TextField(
         blank=True,
         null=True,
         verbose_name="车型描述"
+    )
+    pipelines = models.JSONField(
+        default=list,
+        blank=True,
+        verbose_name="管道配置",
+        help_text="车型的管道配置信息"
     )
 
     class Meta:
@@ -64,3 +72,16 @@ class VehicleModel(BaseModel):
 
     def __str__(self):
         return f"{self.project_space.name} - {self.name}"
+        
+    def get_pipeline_names(self):
+        """获取所有管道名称"""
+        if not self.pipelines:
+            return []
+        return [list(pipeline.keys())[0] for pipeline in self.pipelines if pipeline]
+    
+    def get_pipeline_data(self, pipeline_name):
+        """获取指定管道的数据"""
+        for pipeline in self.pipelines:
+            if pipeline_name in pipeline:
+                return pipeline[pipeline_name]
+        return None
