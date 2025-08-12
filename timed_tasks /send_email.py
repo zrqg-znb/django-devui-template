@@ -336,7 +336,7 @@ def generate_full_report_html(report_data):
             {sections_html}
             <p style="text-align: center; margin-top: 30px; font-size: 12px; color: #777;">
                 此邮件由自动化系统发送，请勿直接回复。<br/>
-                &copy; {datetime.datetime.now().year} 你的公司
+                &copy; xxxx
             </p>
         </div>
     </body>
@@ -426,56 +426,3 @@ if __name__ == "__main__":
     # 2. 生成完整的HTML报告内容
     full_report_html = generate_full_report_html(report_data)
     print(full_report_html)
-
-    # --- 配置邮件发送参数 ---
-    # SENDER_EMAIL = 'your_email@qq.com' # 替换为你的发件邮箱
-    # SENDER_PASSWORD = 'your_authorization_code' # 替换为你的邮箱授权码
-    # RECEIVER_EMAILS = ['receiver1@example.com'] # 收件人列表
-    # CC_EMAILS = ['cc1@example.com'] # 抄送人列表 (可选，如果没有则设为 [] 或 None)
-    # EMAIL_SUBJECT = report_data['report_title'] + ' - ' + report_data['build_date']
-
-    # # --- 立即发送一次邮件示例 ---
-    # print("--- 正在发送一次性邮件 ---")
-    # send_report_email(
-    #     html_content=full_report_html,
-    #     receiver_emails=RECEIVER_EMAILS,
-    #     subject=EMAIL_SUBJECT,
-    #     sender_email=SENDER_EMAIL,
-    #     sender_password=SENDER_PASSWORD,
-    #     cc_emails=CC_EMAILS,
-    #     smtp_server='smtp.qq.com', # 根据你的邮箱服务商调整
-    #     smtp_port=465, # 根据你的邮箱服务商调整 (465 for SSL, 587 for TLS)
-    #     use_tls=False # 如果是587端口，设为True
-    # )
-
-    # --- 定时任务集成（示例，需要安装 schedule 库: pip install schedule） ---
-    # import schedule
-    # import time
-    #
-    # def daily_report_job():
-    #     print(f"[{datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] 正在执行每日报告任务...")
-    #     current_report_data = get_report_data() # 每次执行时获取最新数据
-    #     current_full_report_html = generate_full_report_html(current_report_data)
-    #     current_email_subject = current_report_data['report_title'] + ' - ' + current_report_data['build_date']
-    #
-    #     send_report_email(
-    #         html_content=current_full_report_html,
-    #         receiver_emails=RECEIVER_EMAILS,
-    #         subject=current_email_subject,
-    #         sender_email=SENDER_EMAIL,
-    #         sender_password=SENDER_PASSWORD,
-    #         cc_emails=CC_EMAILS,
-    #         smtp_server='smtp.qq.com',
-    #         smtp_port=465,
-    #         use_tls=False
-    #     )
-    #
-    # # 每天早上8点发送
-    # # schedule.every().day.at("08:00").do(daily_report_job)
-    # # 或者每隔10秒发送一次，用于测试
-    # # schedule.every(10).seconds.do(daily_report_job)
-    #
-    # # print("定时任务已启动，等待执行...")
-    # # while True:
-    # #     schedule.run_pending()
-    # #     time.sleep(1)
