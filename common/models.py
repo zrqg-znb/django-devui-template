@@ -26,3 +26,19 @@ class BaseModel(models.Model):
     class Meta:
         abstract = True  # 抽象模型，不会创建数据表
         ordering = ['-created_at']
+
+
+class ExecutableModel(BaseModel):
+    """可执行模型基类"""
+    last_executed_at = models.DateTimeField(
+        null=True,
+        blank=True,
+        verbose_name="上次执行时间"
+    )
+    execution_count = models.PositiveIntegerField(
+        default=0,
+        verbose_name="执行次数"
+    )
+
+    class Meta:
+        abstract = True

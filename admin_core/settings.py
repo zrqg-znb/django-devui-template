@@ -27,6 +27,7 @@ INSTALLED_APPS = [
     # 本地应用
     'common',
     'vehicle_management',
+    'system'
 ]
 
 MIDDLEWARE = [
