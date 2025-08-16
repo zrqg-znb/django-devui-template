@@ -4,7 +4,7 @@ from .views import (
     ScriptExecutionView, ScriptExecutionDetailView
 )
 
-app_name = 'vehicle_management'
+app_name = 'system'
 
 urlpatterns = [
     # 脚本任务相关

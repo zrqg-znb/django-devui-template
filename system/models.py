@@ -152,3 +152,25 @@ class ScriptExecution(BaseModel):
 
     def __str__(self):
         return f"{self.script_task.name} - {self.started_at.strftime('%Y-%m-%d %H:%M:%S')}"
+    
+    def get_formatted_output(self):
+        """获取格式化的输出信息"""
+        if not self.output:
+            return "无输出"
+        return self.output
+    
+    def has_output(self):
+        """检查是否有输出内容"""
+        return bool(self.output and self.output.strip())
+    
+    def get_execution_summary(self):
+        """获取执行摘要信息"""
+        summary = {
+            'status': self.get_status_display(),
+            'execution_time': f"{self.execution_time:.2f}秒" if self.execution_time else "未知",
+            'has_output': self.has_output(),
+            'has_error': bool(self.error_message),
+            'started_at': self.started_at.strftime('%Y-%m-%d %H:%M:%S'),
+            'finished_at': self.finished_at.strftime('%Y-%m-%d %H:%M:%S') if self.finished_at else "未完成"
+        }
+        return summary

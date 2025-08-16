@@ -3,7 +3,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.utils import timezone
 from .models import ScriptTask, ScriptExecution
 from .serializers import (
-    ScriptTaskSerializer, ScriptTaskCreateSerializer,
+    ScriptTaskSerializer, ScriptTaskCreateSerializer, ScriptTaskUpdateSerializer,
     ScriptExecutionSerializer, ScriptExecuteSerializer
 )
 from .script_executor import ScriptExecutor
@@ -17,13 +17,15 @@ class ScriptTaskService:
     """脚本任务业务逻辑"""
 
     @staticmethod
-    def get_all_scripts(status=None, script_type=None):
+    def get_all_scripts(status=None, script_type=None, name=None):
         """获取所有脚本任务"""
         queryset = ScriptTask.objects.filter(is_deleted=False)
         if status:
             queryset = queryset.filter(status=status)
         if script_type:
             queryset = queryset.filter(script_type=script_type)
+        if name:
+            queryset = queryset.filter(name__icontains=name)
         return queryset.order_by('-created_at')
 
     @staticmethod
@@ -52,7 +54,7 @@ class ScriptTaskService:
         if not script:
             return None, "脚本不存在"
 
-        serializer = ScriptTaskCreateSerializer(script, data=data, partial=True)
+        serializer = ScriptTaskUpdateSerializer(script, data=data, partial=True)
         if serializer.is_valid():
             updated_script = serializer.save()
             return updated_script, None
@@ -138,20 +140,32 @@ class ScriptTaskService:
 class ScriptExecutionService:
     """脚本执行记录业务逻辑"""
 
-    @staticmethod
-    def get_executions_by_script(script_id):
-        """获取脚本的执行记录"""
-        return ScriptExecution.objects.filter(
-            script_task_id=script_id,
-            script_task__is_deleted=False
-        ).order_by('-started_at')
+
 
     @staticmethod
-    def get_all_executions():
+    def get_all_executions(status=None):
         """获取所有执行记录"""
-        return ScriptExecution.objects.filter(
+        queryset = ScriptExecution.objects.filter(
             script_task__is_deleted=False
-        ).select_related('script_task').order_by('-started_at')
+        ).select_related('script_task')
+        
+        if status:
+            queryset = queryset.filter(status=status)
+            
+        return queryset.order_by('-started_at')
+    
+    @staticmethod
+    def get_executions_by_script(script_id, status=None):
+        """获取脚本的执行记录"""
+        queryset = ScriptExecution.objects.filter(
+            script_task_id=script_id,
+            script_task__is_deleted=False
+        )
+        
+        if status:
+            queryset = queryset.filter(status=status)
+            
+        return queryset.order_by('-started_at')
 
     @staticmethod
     def get_execution_by_id(execution_id):

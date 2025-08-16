@@ -61,10 +61,17 @@ class ScriptExecutor:
 
             execution_time = time.time() - start_time
 
+            # 合并标准输出和标准错误输出，提供完整的脚本执行信息
+            combined_output = ""
+            if result.stdout:
+                combined_output += f"=== 标准输出 ===\n{result.stdout}\n"
+            if result.stderr:
+                combined_output += f"=== 错误输出 ===\n{result.stderr}\n"
+            
             if result.returncode == 0:
-                return True, result.stdout, result.stderr, execution_time
+                return True, combined_output.strip(), result.stderr, execution_time
             else:
-                return False, result.stdout, result.stderr, execution_time
+                return False, combined_output.strip(), result.stderr, execution_time
 
         except subprocess.TimeoutExpired:
             return False, "", "脚本执行超时", time.time() - start_time
@@ -92,10 +99,17 @@ class ScriptExecutor:
 
             execution_time = time.time() - start_time
 
+            # 合并标准输出和标准错误输出，提供完整的脚本执行信息
+            combined_output = ""
+            if result.stdout:
+                combined_output += f"=== 标准输出 ===\n{result.stdout}\n"
+            if result.stderr:
+                combined_output += f"=== 错误输出 ===\n{result.stderr}\n"
+            
             if result.returncode == 0:
-                return True, result.stdout, result.stderr, execution_time
+                return True, combined_output.strip(), result.stderr, execution_time
             else:
-                return False, result.stdout, result.stderr, execution_time
+                return False, combined_output.strip(), result.stderr, execution_time
 
         except subprocess.TimeoutExpired:
             return False, "", "脚本执行超时", time.time() - start_time
